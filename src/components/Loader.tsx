@@ -1,13 +1,13 @@
 import { Spinner } from "react-bootstrap";
 
-const Loader = () => {
+const Loader = ({ width = 30, height = 30 }: LoaderProps) => {
   return (
     <Spinner
       animation="border"
       role="status"
       style={{
-        width: "30px",
-        height: "30px",
+        width: `${width}px`,
+        height: `${height}px`,
         margin: "auto",
         display: "block",
       }}

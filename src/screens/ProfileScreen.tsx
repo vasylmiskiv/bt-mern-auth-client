@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Form, Button } from "react-bootstrap";
-import FormContainer from "../components/FormContainer";
 import { toast } from "react-toastify";
-import Loader from "../components/Loader";
+
 import { setCredentials } from "../slices/authSlice";
 import { useUpdateUserMutation } from "../slices/usersApiSlice";
+
+import Loader from "../components/Loader";
+import FormContainer from "../components/FormContainer";
 
 const ProfileScreen = () => {
   const [name, setName] = useState("");
@@ -14,19 +15,20 @@ const ProfileScreen = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const { userInfo } = useSelector((state: any) => state.auth);
+  const { userInfo } = useSelector((state: RootState) => state.auth);
 
   const [updateProfile, { isLoading }] = useUpdateUserMutation();
 
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    setName(userInfo.name);
-    setEmail(userInfo.email);
-  }, [userInfo.name, userInfo.email]);
+    if (userInfo) {
+      setName(userInfo.name);
+      setEmail(userInfo.email);
+    }
+  }, [userInfo?.name, userInfo?.email]);
 
-  const submitHandler = async (e: any) => {
+  const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
@@ -34,13 +36,17 @@ const ProfileScreen = () => {
     } else {
       try {
         const res = await updateProfile({
-          _id: userInfo._id,
+          _id: userInfo?._id,
           name,
           email,
           password,
         }).unwrap();
 
         dispatch(setCredentials({ ...res }));
+
+        setPassword("");
+        setConfirmPassword("");
+
         toast.success("Profile has been successfully updated");
       } catch (err: any) {
         toast.error(err?.data?.message || err.error);
@@ -95,7 +101,7 @@ const ProfileScreen = () => {
         {isLoading && <Loader />}
 
         <Button type="submit" variant="primary" className="mt-3">
-          Change Profile
+          Update profile
         </Button>
       </Form>
     </FormContainer>

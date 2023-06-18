@@ -3,9 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import FormContainer from "../components/FormContainer";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+
 import { useLoginMutation } from "../slices/usersApiSlice";
 import { setCredentials } from "../slices/authSlice";
-import { toast } from "react-toastify";
+
 import Loader from "../components/Loader";
 
 const LoginScreen = () => {
@@ -17,7 +19,7 @@ const LoginScreen = () => {
 
   const [login, { isLoading }] = useLoginMutation();
 
-  const { userInfo } = useSelector((state: any) => state.auth);
+  const { userInfo } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
     if (userInfo) {
@@ -25,10 +27,12 @@ const LoginScreen = () => {
     }
   }, [navigate, userInfo]);
 
-  const submitHandler = async (e: any) => {
+  const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     try {
       const res = await login({ email, password }).unwrap();
+
       dispatch(setCredentials({ ...res }));
       navigate("/");
     } catch (err: any) {

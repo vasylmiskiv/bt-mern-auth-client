@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Form, Button, Row, Col } from "react-bootstrap";
-import FormContainer from "../components/FormContainer";
 import { toast } from "react-toastify";
-import Loader from "../components/Loader";
+
 import { useRegisterMutation } from "../slices/usersApiSlice";
 import { setCredentials } from "../slices/authSlice";
+
+import Loader from "../components/Loader";
+import FormContainer from "../components/FormContainer";
 
 const RegisterScreen = () => {
   const [name, setName] = useState("");
@@ -14,7 +16,7 @@ const RegisterScreen = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const { userInfo } = useSelector((state: any) => state.auth);
+  const { userInfo } = useSelector((state: RootState) => state.auth);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -27,7 +29,7 @@ const RegisterScreen = () => {
     }
   }, [navigate, userInfo]);
 
-  const submitHandler = async (e: any) => {
+  const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (password !== confirmPassword) {
       toast.error("Passwords do not match");
